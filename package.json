@@ -1,0 +1,23 @@
+{
+  "name": "mvi-example",
+  "version": "0.1.0",
+  "author": "Andre Staltz",
+  "dependencies": {
+    "rx": "2.3.12",
+    "virtual-dom": "0.0.19",
+    "virtual-hyperscript": "4.4.0",
+    "dom-delegator": "9.0.1",
+    "vdom-virtualize": "0.0.4"
+  },
+  "devDependencies": {
+    "browserify": "~2.36.0"
+  },
+  "scripts": {
+    "lint": "./node_modules/.bin/jshint src/ ",
+    "jscs": "./node_modules/.bin/jscs src/",
+    "check": "npm run lint && npm run jscs",
+    "browserify": "./node_modules/.bin/browserify src/app.js -o dist/js/app.js",
+    "preinstall": "rm -rf build && rm -rf node_modules",
+    "postinstall": "ln -s ../src node_modules/mvi-example"
+  }
+}
