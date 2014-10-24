@@ -55,20 +55,12 @@ var items$ = Rx.Observable.just([{id: 0, color: 'red', width: 300}])
         .map(reassignId);
     }
     else if (x.operation === 'changeColor') {
-      return listItems
-        .map(function (item) {
-          if (item.id === x.id) { return {color: x.color, width: item.width}; }
-          else { return item; }
-        })
-        .map(reassignId);
+      listItems[x.id].color = x.color;
+      return listItems;
     }
     else if (x.operation === 'changeWidth') {
-      return listItems
-        .map(function (item) {
-          if (item.id === x.id) { return {color: item.color, width: x.width}; }
-          else { return item; }
-        })
-        .map(reassignId);
+      listItems[x.id].width = x.width;
+      return listItems;
     }
     else {
       return listItems;
