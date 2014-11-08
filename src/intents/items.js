@@ -20,24 +20,18 @@ function observe(ItemsView) {
   replicate(ItemsView.itemWidthChanged$, inputItemWidthChanged$);
 }
 
-var addItem$ = Rx.Observable
-  .merge(
-    inputAddOneClicks$.map(function () { return {operation: 'add', amount: 1}; }),
-    inputAddManyClicks$.map(function () { return {operation: 'add', amount: 1000}; })
+var addItem$ = Rx.Observable.merge(
+    inputAddOneClicks$.map(function () { return 1; }),
+    inputAddManyClicks$.map(function () { return 1000; })
   );
 
-var removeItem$ = inputRemoveClicks$
-  .map(function (clickEvent) {
-    return {
-      operation: 'remove',
-      id: Number(clickEvent.currentTarget.attributes['data-item-id'].value)
-    };
-  });
+var removeItem$ = inputRemoveClicks$.map(function (clickEvent) {
+  return Number(clickEvent.currentTarget.attributes['data-item-id'].value);
+});
 
 var colorChanged$ = inputItemColorChanged$
   .map(function (inputEvent) {
     return {
-      operation: 'changeColor',
       id: Number(inputEvent.currentTarget.attributes['data-item-id'].value),
       color: inputEvent.currentTarget.value
     };
@@ -46,7 +40,6 @@ var colorChanged$ = inputItemColorChanged$
 var widthChanged$ = inputItemWidthChanged$
   .map(function (inputEvent) {
     return {
-      operation: 'changeWidth',
       id: Number(inputEvent.currentTarget.attributes['data-item-id'].value),
       width: Number(inputEvent.currentTarget.value)
     };

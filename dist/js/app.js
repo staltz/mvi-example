@@ -1687,24 +1687,18 @@ function observe(ItemsView) {
   replicate(ItemsView.itemWidthChanged$, inputItemWidthChanged$);
 }
 
-var addItem$ = Rx.Observable
-  .merge(
-    inputAddOneClicks$.map(function () { return {operation: 'add', amount: 1}; }),
-    inputAddManyClicks$.map(function () { return {operation: 'add', amount: 1000}; })
+var addItem$ = Rx.Observable.merge(
+    inputAddOneClicks$.map(function () { return 1; }),
+    inputAddManyClicks$.map(function () { return 1000; })
   );
 
-var removeItem$ = inputRemoveClicks$
-  .map(function (clickEvent) {
-    return {
-      operation: 'remove',
-      id: Number(clickEvent.currentTarget.attributes['data-item-id'].value)
-    };
-  });
+var removeItem$ = inputRemoveClicks$.map(function (clickEvent) {
+  return Number(clickEvent.currentTarget.attributes['data-item-id'].value);
+});
 
 var colorChanged$ = inputItemColorChanged$
   .map(function (inputEvent) {
     return {
-      operation: 'changeColor',
       id: Number(inputEvent.currentTarget.attributes['data-item-id'].value),
       color: inputEvent.currentTarget.value
     };
@@ -1713,7 +1707,6 @@ var colorChanged$ = inputItemColorChanged$
 var widthChanged$ = inputItemWidthChanged$
   .map(function (inputEvent) {
     return {
-      operation: 'changeWidth',
       id: Number(inputEvent.currentTarget.attributes['data-item-id'].value),
       width: Number(inputEvent.currentTarget.value)
     };
@@ -1763,39 +1756,44 @@ function reassignId(item, index) {
   return {id: index, color: item.color, width: item.width};
 }
 
-var items$ = Rx.Observable.just([{id: 0, color: 'red', width: 300}])
-  .merge(intentAddItem$)
-  .merge(intentRemoveItem$)
-  .merge(intentColorChanged$)
-  .merge(intentWidthChanged$)
-  .scan(function (listItems, x) {
-    if (Array.isArray(x)) {
-      return x;
-    }
-    else if (x.operation === 'add') {
-      var newItems = [];
-      for (var i = 0; i < x.amount; i++) {
-        newItems.push(createRandomItem());
-      }
-      return listItems.concat(newItems).map(reassignId);
-    }
-    else if (x.operation === 'remove') {
-      return listItems
-        .filter(function (item) { return item.id !== x.id; })
-        .map(reassignId);
-    }
-    else if (x.operation === 'changeColor') {
-      listItems[x.id].color = x.color;
-      return listItems;
-    }
-    else if (x.operation === 'changeWidth') {
-      listItems[x.id].width = x.width;
-      return listItems;
-    }
-    else {
-      return listItems;
-    }
-  });
+var addItemMod$ = intentAddItem$.map(function(amount) {
+  var newItems = [];
+  for (var i = 0; i < amount; i++) {
+    newItems.push(createRandomItem());
+  }
+  return function(listItems) {
+    return listItems.concat(newItems).map(reassignId);
+  };
+});
+
+var removeItemMod$ = intentRemoveItem$.map(function (id) {
+  return function(listItems) {
+    return listItems.filter(function (item) { return item.id !== id; })
+                    .map(reassignId);
+  };
+});
+
+var colorChangedMod$ = intentColorChanged$.map(function(x) {
+  return function(listItems) {
+    listItems[x.id].color = x.color;
+    return listItems;
+  };
+});
+
+var widthChangedMod$ = intentWidthChanged$.map(function (x) {
+  return function(listItems) {
+    listItems[x.id].width = x.width;
+    return listItems;
+  };
+});
+
+var itemModifications = addItemMod$.merge(removeItemMod$).merge(colorChangedMod$).merge(widthChangedMod$);
+
+var item$ = itemModifications.startWith(
+  [{id: 0, color: 'red', width: 300}]
+).scan(function(listItems, modification) {
+  return modification(listItems);
+});
 
 module.exports = {
   observe: observe,
