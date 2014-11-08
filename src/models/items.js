@@ -66,7 +66,7 @@ var widthChangedMod$ = intentWidthChanged$.map(function (x) {
 
 var itemModifications = addItemMod$.merge(removeItemMod$).merge(colorChangedMod$).merge(widthChangedMod$);
 
-var item$ = itemModifications.startWith(
+var items$ = itemModifications.startWith(
   [{id: 0, color: 'red', width: 300}]
 ).scan(function(listItems, modification) {
   return modification(listItems);
