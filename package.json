@@ -10,13 +10,17 @@
     "vdom-virtualize": "0.0.4"
   },
   "devDependencies": {
-    "browserify": "~2.36.0"
+    "browserify": "~2.36.0",
+    "jscs": "^1.7.3",
+    "jshint": "^2.5.10",
+    "watchify": "^2.1.1"
   },
   "scripts": {
-    "lint": "./node_modules/.bin/jshint src/ ",
-    "jscs": "./node_modules/.bin/jscs src/",
+    "lint": "jshint src/",
+    "jscs": "jscs src/",
     "check": "npm run lint && npm run jscs",
-    "browserify": "./node_modules/.bin/browserify src/app.js -o dist/js/app.js",
+    "browserify": "browserify src/app.js -o dist/js/app.js",
+    "dev": "watchify src/app.js -o dist/js/app.js",
     "preinstall": "rm -rf build && rm -rf node_modules",
     "postinstall": "ln -s ../src node_modules/mvi-example"
   }

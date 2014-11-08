@@ -40,7 +40,7 @@ var colorChanged$ = inputItemColorChanged$
       operation: 'changeColor',
       id: Number(inputEvent.currentTarget.attributes['data-item-id'].value),
       color: inputEvent.currentTarget.value
-    }
+    };
   });
 
 var widthChanged$ = inputItemWidthChanged$
@@ -49,7 +49,7 @@ var widthChanged$ = inputItemWidthChanged$
       operation: 'changeWidth',
       id: Number(inputEvent.currentTarget.attributes['data-item-id'].value),
       width: Number(inputEvent.currentTarget.value)
-    }
+    };
   });
 
 module.exports = {
