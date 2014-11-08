@@ -1707,7 +1707,7 @@ var colorChanged$ = inputItemColorChanged$
       operation: 'changeColor',
       id: Number(inputEvent.currentTarget.attributes['data-item-id'].value),
       color: inputEvent.currentTarget.value
-    }
+    };
   });
 
 var widthChanged$ = inputItemWidthChanged$
@@ -1716,7 +1716,7 @@ var widthChanged$ = inputItemWidthChanged$
       operation: 'changeWidth',
       id: Number(inputEvent.currentTarget.attributes['data-item-id'].value),
       width: Number(inputEvent.currentTarget.value)
-    }
+    };
   });
 
 module.exports = {
@@ -1822,14 +1822,14 @@ var delegator;
 
 function renderVTreeStream(vtree$, containerSelector) {
   // Find and prepare the container
-  var container = document.querySelector(containerSelector);
+  var container = window.document.querySelector(containerSelector);
   if (container === null) {
     console.error('Couldn\'t render into unknown \'' + containerSelector + '\'');
     return false;
   }
   container.innerHTML = '';
   // Make the DOM node bound to the VDOM node
-  var rootNode = document.createElement('div');
+  var rootNode = window.document.createElement('div');
   container.appendChild(rootNode);
   vtree$.startWith(h())
     .bufferWithCount(2, 1)
